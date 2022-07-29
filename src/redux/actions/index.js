@@ -18,4 +18,6 @@ export function getCurrencies() {
   };
 }
 
+export const addExpenses = (expenses) => ({ type: 'ADD_EXPENSES', expenses });
+
 // export default { addEmail, getCurrencies };

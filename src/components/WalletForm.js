@@ -1,17 +1,21 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { getCurrencies } from '../redux/actions';
+import { getCurrencies, addExpenses } from '../redux/actions';
+
+const categoria = 'Alimentação';
 
 class WalletForm extends Component {
   constructor() {
     super();
     this.state = {
+      id: 0,
       value: '',
       description: '',
-      currency: '',
-      method: '',
-      tag: '',
+      currency: 'USD',
+      method: 'Dinheiro',
+      tag: categoria,
+      exchangeRates: {},
     };
   }
 
@@ -28,9 +32,36 @@ class WalletForm extends Component {
     });
   }
 
+  // getExchangeRates = (objs) => {
+  //   const coins = Object.values(objs)
+  //     .filter((obj) => obj.code !== 'DOGE' && obj.codein !== 'BRLT');
+  //   return coins.map((coin) => ({
+  //     [coin.code]: coin,
+  //   }));
+  // }
+
+  dispatchExpenses = async () => {
+    await fetch('https://economia.awesomeapi.com.br/json/all')
+      .then((response) => response.json())
+      .then((data) => this.setState({ exchangeRates: data }))
+      .catch((error) => console.log(error));
+    const { addExpensesDispatch } = this.props;
+    addExpensesDispatch(this.state);
+    this.setState((state) => ({
+      id: state.id + 1,
+      value: '',
+      description: '',
+      currency: 'USD',
+      method: 'Dinheiro',
+      tag: categoria,
+      exchangeRates: {},
+    }));
+  }
+
   render() {
     const { value, description, currency, method, tag } = this.state;
     const { currencies, loading } = this.props;
+    const MIN = 0;
     if (loading === true) return <h1>Loading...</h1>;
     return (
       <div>
@@ -100,15 +131,14 @@ class WalletForm extends Component {
               <option value="Saúde">Saúde</option>
             </select>
           </label>
-          {/* <button
+          <button
             type="button"
-            disabled={
-              !email.includes('@') || senha.length < MIN || !email.includes('.com')
-            }
-            onClick={ () => { addEmailDispatch(email); this.logChange(); } }
+            disabled={ !value.length > MIN
+              || !description.length > MIN }
+            onClick={ this.dispatchExpenses }
           >
-            Entrar
-          </button> */}
+            Adicionar despesa
+          </button>
         </form>
       </div>
     );
@@ -119,6 +149,7 @@ WalletForm.propTypes = {
   currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
   loading: PropTypes.bool.isRequired,
   getCurrenciesDispatch: PropTypes.func.isRequired,
+  addExpensesDispatch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (store) => ({
@@ -128,6 +159,7 @@ const mapStateToProps = (store) => ({
 
 const mapDispatchToProps = (dispatch) => ({
   getCurrenciesDispatch: () => dispatch(getCurrencies()),
+  addExpensesDispatch: (expenses) => dispatch(addExpenses(expenses)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(WalletForm);
