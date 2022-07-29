@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import addEmail from '../redux/actions';
+import { addEmail } from '../redux/actions';
 
 class Login extends React.Component {
   constructor() {
@@ -38,6 +38,7 @@ class Login extends React.Component {
         <h1>Login</h1>
         <form>
           <label htmlFor="email">
+            Email:
             <input
               type="email"
               id="email"
@@ -48,6 +49,7 @@ class Login extends React.Component {
             />
           </label>
           <label htmlFor="senha">
+            Senha:
             <input
               type="password"
               id="senha"
