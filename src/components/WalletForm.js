@@ -62,7 +62,7 @@ class WalletForm extends Component {
     const MIN = 0;
     return (
       <div>
-        <form>
+        <form className="form">
           <label htmlFor="value">
             Valor:
             <input
