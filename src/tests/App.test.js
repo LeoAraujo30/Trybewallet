@@ -4,14 +4,12 @@ import mockData from './helpers/mockData';
 import App from '../App';
 import Wallet from '../pages/Wallet';
 import Header from '../components/Header';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 const mockStore = { 
   user: { email: 'alguem@alguem.com' }, 
   wallet: {
-    // currencies: ['USD', 'CAD', 'GBP', 'ARS', 'BTC', 'LTC', 'EUR', 'JPY', 'CHF',
-    //   'AUD', 'CNY', 'ILS', 'ETH', 'XRP', 'DOGE'],
     expenses: [
       {
         id: 0,
@@ -80,5 +78,39 @@ describe('Testando o componente <App />', () => {
     expect(fetch).toHaveBeenCalledTimes(2);
 
     expect(await screen.findByTestId('total-field')).toHaveTextContent('9.51');
+  });
+  it('Testando o componente <Table /> da pagina Wallet', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      json: jest.fn().mockResolvedValue(mockData),
+    });
+    renderWithRouterAndRedux(<Wallet />);
+
+    const value = screen.getByTestId('value-input');
+    const descripion = screen.getByTestId('description-input');
+    const addButton = screen.getByRole('button', { name: 'Adicionar despesa' });
+    userEvent.type(value, '3');
+    userEvent.type(descripion, 'despesa 3');
+    userEvent.click(addButton);
+    expect(await screen.findByTestId('total-field')).toHaveTextContent('14.26');
+
+    const deleteButton = screen.getByRole('button', { name: 'Excluir' });
+    expect(deleteButton).toBeInTheDocument();
+    userEvent.click(deleteButton);
+    expect(await screen.findByTestId('total-field')).toHaveTextContent('0.00');
+
+    userEvent.type(value, '4');
+    userEvent.type(descripion, 'despesa 4');
+    userEvent.click(addButton);
+    expect(await screen.findByTestId('total-field')).toHaveTextContent('19.01');
+
+    const editButton = screen.getByRole('button', { name: 'Editar' });
+    expect(editButton).toBeInTheDocument();
+    userEvent.click(editButton);
+    const addEditButton = screen.getByRole('button', { name: 'Editar despesa' });
+    expect(addEditButton).toBeInTheDocument();
+    userEvent.type(value, '5');
+    userEvent.type(descripion, 'despesa 5');
+    userEvent.click(addEditButton);
+    expect(await screen.findByTestId('total-field')).toHaveTextContent('23.77');
   });
 });

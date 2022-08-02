@@ -31,14 +31,6 @@ class WalletForm extends Component {
     });
   }
 
-  // getExchangeRates = (objs) => {
-  //   const coins = Object.values(objs)
-  //     .filter((obj) => obj.code !== 'DOGE' && obj.codein !== 'BRLT');
-  //   return coins.map((coin) => ({
-  //     [coin.code]: coin,
-  //   }));
-  // }
-
   dispatchExpenses = async () => {
     await fetch('https://economia.awesomeapi.com.br/json/all')
       .then((response) => response.json())
