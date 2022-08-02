@@ -19,4 +19,6 @@ export const addExpenses = (expenses) => ({ type: 'ADD_EXPENSES', expenses });
 
 export const removeExpenses = (id) => ({ type: 'REMOVE_EXPENSES', id });
 
-// export default { addEmail, getCurrencies };
+export const editOn = (id) => ({ type: 'EDIT_ON', id });
+
+export const editExpenses = (expenses, id) => ({ type: 'EDIT_EXPENSES', expenses, id });
