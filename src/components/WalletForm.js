@@ -25,8 +25,7 @@ class WalletForm extends Component {
   }
 
   inpChange = ({ target }) => {
-    const { name } = target;
-    const value = target.type === 'checkbox' ? target.checked : target.value;
+    const { name, value } = target;
     this.setState({
       [name]: value,
     });
@@ -43,8 +42,7 @@ class WalletForm extends Component {
   dispatchExpenses = async () => {
     await fetch('https://economia.awesomeapi.com.br/json/all')
       .then((response) => response.json())
-      .then((data) => this.setState({ exchangeRates: data }))
-      .catch((error) => console.log(error));
+      .then((data) => this.setState({ exchangeRates: data }));
     const { addExpensesDispatch } = this.props;
     addExpensesDispatch(this.state);
     this.setState((state) => ({
@@ -60,9 +58,8 @@ class WalletForm extends Component {
 
   render() {
     const { value, description, currency, method, tag } = this.state;
-    const { currencies, loading } = this.props;
+    const { currencies } = this.props;
     const MIN = 0;
-    if (loading === true) return <h1>Loading...</h1>;
     return (
       <div>
         <form>
@@ -133,8 +130,7 @@ class WalletForm extends Component {
           </label>
           <button
             type="button"
-            disabled={ !value.length > MIN
-              || !description.length > MIN }
+            disabled={ !value.length > MIN || !description.length > MIN }
             onClick={ this.dispatchExpenses }
           >
             Adicionar despesa
@@ -147,14 +143,12 @@ class WalletForm extends Component {
 
 WalletForm.propTypes = {
   currencies: PropTypes.arrayOf(PropTypes.string).isRequired,
-  loading: PropTypes.bool.isRequired,
   getCurrenciesDispatch: PropTypes.func.isRequired,
   addExpensesDispatch: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (store) => ({
   currencies: store.wallet.currencies,
-  loading: store.wallet.loading,
 });
 
 const mapDispatchToProps = (dispatch) => ({
